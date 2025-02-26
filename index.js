@@ -6,30 +6,26 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
+
+// Fix CORS Issue
+app.use(cors({
+  origin: "http://localhost:5173",  // Allow frontend to access backend
+  credentials: true,
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization"
+}));
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-  credentials: true,
-  origin: process.env.FRONTEND_URL || "http://localhost:5173"
-}));
 app.use(cookieParser());
 
-// Database Connection with Improved Error Handling
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    console.log("✅ MongoDB Connected Successfully");
-  } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error.message);
-    process.exit(1); // Exit process with failure
-  }
-};
-connectDB();
+// Database Connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log("✅ MongoDB Connected"))
+.catch(err => console.log("❌ MongoDB Connection Error:", err));
 
 // Routes
 app.use("/api/auth", authRoutes);

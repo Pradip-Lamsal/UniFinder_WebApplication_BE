@@ -5,6 +5,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const courseRoutes = require("./routes/courseRoutes");
+const consultanciesRoutes = require("./routes/consultanciesRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -31,6 +32,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", courseRoutes);
+app.use("/api", consultanciesRoutes);
 
 // Root Route
 app.get("/", (req, res) => {
